@@ -13,7 +13,6 @@ namespace MiddlewareLifetimes.Middlewares
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
 
-        private readonly IOperationTransient _transientOperation;
         private readonly IOperationSingleton _singletonOperation;
 
         /// <summary>
@@ -23,10 +22,9 @@ namespace MiddlewareLifetimes.Middlewares
         /// <param name="logger">Represents a type used to perform logging.</param>
         /// <param name="transientOperation">Transient Operation</param>
         /// <param name="singletonOperation">Singleton Operation</param>
-        public CustomMiddleware(RequestDelegate next, ILogger<CustomMiddleware> logger, IOperationTransient transientOperation, IOperationSingleton singletonOperation)
+        public CustomMiddleware(RequestDelegate next, ILogger<CustomMiddleware> logger, IOperationSingleton singletonOperation)
         {
             this._logger = logger;
-            this._transientOperation = transientOperation;
             this._singletonOperation = singletonOperation;
             this._next = next;
         }
@@ -37,12 +35,12 @@ namespace MiddlewareLifetimes.Middlewares
         /// <param name="context">Encapsulates all HTTP-specific information about an individual HTTP request.</param>
         /// <param name="scopedOperation">Scoped Operation</param>
         /// <returns>Represents an asynchronous operation.</returns>
-        public async Task InvokeAsync(HttpContext context, IOperationScoped scopedOperation)
+        public async Task InvokeAsync(HttpContext context, IOperationScoped scopedOperation, IOperationTransient transientOperation)
         {
             this._logger.LogInformation("---------------------------------------------------------------");
-            this._logger.LogInformation("Transient: " + _transientOperation.OperationId);
+            this._logger.LogInformation("Transient: " + transientOperation.OperationId);
             this._logger.LogInformation("Scoped: " + scopedOperation.OperationId);
-            this._logger.LogInformation("Singleton: " + _singletonOperation.OperationId);
+            this._logger.LogInformation("Singleton: " + this._singletonOperation.OperationId);
 
             await _next(context);
         }

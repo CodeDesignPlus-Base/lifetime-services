@@ -17,7 +17,7 @@ namespace MiddlewareLifetimes.Services
         /// </summary>
         public OperationSingleton()
         {
-            this.OperationId = Guid.NewGuid().ToString()[^4..];
+            this.OperationId = new Random().Next(0, 9999).ToString();
         }
     }
 }
